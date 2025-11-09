@@ -25,3 +25,24 @@ venv/
 *.tar
 *.zip
 *.gz
+
+
+# Terraform local directories
+.terraform/
+
+# Terraform state files
+terraform.tfstate
+terraform.tfstate.backup
+
+# Crash logs
+crash.log
+
+# Override files (якщо є)
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI configuration
+.terraformrc
+terraform.rc
