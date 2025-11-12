@@ -19,3 +19,10 @@ module "ecr" {
   scan_on_push = true
 }
 
+module "eks" {
+  source             = "./modules/eks"
+  cluster_name       = "lesson-7-eks"
+  vpc_id             = module.vpc.vpc_id
+  private_subnet_ids = module.vpc.private_subnets
+}
+
