@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: {{ .Chart.Name }}-config
 data:
-  DATABASE_URL: "{{ .Values.env.DATABASE_URL }}"
-  SECRET_KEY: "{{ .Values.env.SECRET_KEY }}"
+  DJANGO_SETTINGS_MODULE: {{ .Values.config.DJANGO_SETTINGS_MODULE }}
+  DEBUG: "{{ .Values.config.DEBUG }}"

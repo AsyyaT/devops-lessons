@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -15,8 +17,13 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: 8000
+            - containerPort: {{ .Values.service.port }}
           envFrom:
             - configMapRef:
                 name: {{ .Chart.Name }}-config
+            {{- if .Values.secretName }}
+            - secretRef:
+                name: {{ .Values.secretName }}
+            {{- end }}
