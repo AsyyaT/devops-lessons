@@ -5,5 +5,5 @@ resource "aws_eks_cluster" "eks_cluster" {
   vpc_config {
     subnet_ids = var.private_subnet_ids
   }
-  depends_on = [aws_iam_role_policy_attachment.eks_policy]
+  depends_on = [aws_iam_role_policy_attachment.eks_cluster_policy]
 }
