@@ -38,3 +38,29 @@ output "ecr_repository_url" {
   description = "URL of the ECR repository"
   value       = module.ecr.ecr_url
 }
+
+output "jenkins_release" {
+  description = "Jenkins release name"
+  value       = module.jenkins.jenkins_release_name
+}
+
+output "jenkins_namespace" {
+  description = "Jenkins namespace"
+  value       = module.jenkins.jenkins_namespace
+}
+
+
+output "argocd_namespace" {
+  description = "ArgoCD namespace"
+  value       = module.argo_cd.namespace
+}
+
+output "argocd_server_service" {
+  description = "ArgoCD server service"
+  value       = module.argo_cd.argo_cd_server_service
+}
+
+output "argocd_admin_password" {
+  description = "Initial admin password"
+  value       = module.argo_cd.admin_password
+}
