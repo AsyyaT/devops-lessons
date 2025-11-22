@@ -34,7 +34,7 @@ spec:
   environment {
     ECR_REPOSITORY_URL = "${env.ECR_REPOSITORY_URL}"
     GITHUB_REPO_URL    = "${env.GITHUB_REPO_URL}"
-    IMAGE_TAG          = "v1.0.${BUILD_NUMBER}"
+    IMAGE_TAG          = "v1.2.${BUILD_NUMBER}"
     COMMIT_EMAIL       = "jenkins@localhost"
     COMMIT_NAME        = "jenkins"
   }
