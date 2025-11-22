@@ -1,0 +1,22 @@
+replicaCount: 2
+
+image:
+  repository: 128052882711.dkr.ecr.eu-west-1.amazonaws.com/lesson-8-ecr
+  tag: 1.0.0
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 8000
+
+config:
+  DJANGO_SETTINGS_MODULE: "app.settings"
+  DEBUG: "False"
+
+secretName: django-db-secret
+
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
