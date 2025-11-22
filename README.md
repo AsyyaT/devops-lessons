@@ -1,46 +1,87 @@
-### Домашнє завдання 7: Розгортання Django на Kubernetes
 
-### Опис
+# DevOps Lessons - Terraform + Jenkins + Argo CD
 
-Це завдання демонструє:
+## 1. Застосування Terraform
 
-1. Створення кластера Kubernetes через Terraform (AWS EKS).
-2. Налаштування Elastic Container Registry (ECR) для зберігання Docker-образу Django.
-3. Завантаження Docker-образу у ECR.
-4. Створення Helm chart з:
-   - Deployment (Django-поди)
-   - Service (LoadBalancer)
-   - ConfigMap (змінні середовища)
-   - HPA (автоматичне масштабування)
-5. Правильне підключення секретів для бази даних PostgreSQL.
+1. Ініціалізація Terraform:
+```bash
+terraform init
+````
 
-
-## Команди
-
-### 1. Перевірка доступних вузлів Kubernetes
+2. Планування змін:
 
 ```bash
-kubectl get nodes
+terraform plan
 ```
 
+3. Застосування змін:
 
-### 2. Створення секрету з даними бази даних
-
-Рекомендовано зберігати чутливі дані у Kubernetes Secret, а не в ConfigMap.
-
-kubectl create secret generic django-db-secret \
-  --from-literal=POSTGRES_DB=db_name \
-  --from-literal=POSTGRES_USER=db_user \
-  --from-literal=POSTGRES_PASSWORD=db_pass \
-  --from-literal=DB_HOST=db \
-  --from-literal=DB_PORT=5432
-
-
-Після цього у Deployment можна підключити секрет через envFrom.secretRef.
-
-
-### Перевірка Helm chart перед деплоєм
 ```bash
-helm lint charts/app-name/
-helm template app-name charts/app-name/ --values charts/app-name/values.yaml
+terraform apply
 ```
+
+> Після `apply` Jenkins і всі необхідні ресурси будуть створені або оновлені у Kubernetes.
+
+---
+
+## 2. Перевірка Jenkins job
+
+1. Отримати пароль адміністратора Jenkins:
+
+```bash
+kubectl exec --namespace jenkins -it svc/jenkins -c jenkins -- /bin/cat /run/secrets/additional/chart-admin-password && echo
+```
+
+2. Отримати URL Jenkins:
+
+```bash
+kubectl get svc -n jenkins jenkins
+```
+
+3. Увійти в Jenkins через браузер, використовуючи `admin` і отриманий пароль.
+
+4. Перевірити seed-job:
+
+   * Відкрити `seed-job` в Jenkins.
+   * Переконатися, що job створює pipeline для проекту Django.
+   * Pipeline має підключатися до GitHub і будувати образ у ECR.
+
+---
+
+## 3. Перегляд результату в Argo CD
+
+1. Відкрити Argo CD UI (через LoadBalancer або порт-форвардинг):
+
+```bash
+kubectl port-forward svc/argo-cd-server -n argocd 8080:443
+```
+
+* Далі відкрити [https://localhost:8080](https://localhost:8080) в браузері.
+
+2. Залогінитися:
+
+   * Ім’я користувача: `admin`
+   * Пароль: взяти з секрету Argo CD:
+
+```bash
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+```
+
+3. Синхронізація додатку:
+
+   * В Argo CD обрати додаток, який відповідає твоєму Django-проєкту.
+   * Натиснути **Sync** з такими опціями:
+
+     * `Revision`: lesson-8-9
+     * `Prune`: ✅
+     * `Apply Out of Sync Only`: ✅
+     * `Server-Side Apply`: ✅
+     * `Prune Propagation Policy`: `foreground`
+   * Натиснути **Synchronize / Apply**.
+
+4. Перевірити стан:
+
+   * Статус додатку має бути **Synced** та **Healthy**.
+   * Можна перевірити всі ресурси (Deployment, Service, ConfigMap, HPA) у UI.
+
+---
