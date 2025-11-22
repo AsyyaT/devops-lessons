@@ -46,3 +46,4 @@ override.tf.json
 # CLI configuration
 .terraformrc
 terraform.rc
+.terraform.tfstate.lock.info

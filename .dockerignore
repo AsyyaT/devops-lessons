@@ -1,0 +1,31 @@
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Віртуальне середовище
+venv/
+env/
+*.env
+
+# Git
+.git/
+.gitignore
+
+# Логи
+*.log
+
+# SQLite (якщо є)
+*.sqlite3
+
+# MacOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Node / frontend (якщо є)
+node_modules/
+dist/
