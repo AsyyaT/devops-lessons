@@ -27,12 +27,12 @@ module "eks" {
 }
 
 data "aws_eks_cluster" "eks" {
-  name       = module.eks.eks_cluster_name
+  name       = module.eks.cluster_name
   depends_on = [module.eks]
 }
 
 data "aws_eks_cluster_auth" "eks" {
-  name       = module.eks.eks_cluster_name
+  name       = module.eks.cluster_name
   depends_on = [module.eks]
 }
 
@@ -53,13 +53,13 @@ provider "helm" {
 
 module "jenkins" {
   source             = "./modules/jenkins"
-  cluster_name       = module.eks.eks_cluster_name
+  cluster_name       = module.eks.cluster_name
   oidc_provider_arn  = module.eks.oidc_provider_arn
   oidc_provider_url  = module.eks.oidc_provider_url
   github_pat         = var.github_pat
   github_user        = var.github_user
   github_repo_url     = var.github_repo_url
-  ecr_repository_url  = module.ecr.repository_url
+  ecr_repository_url  = module.ecr.ecr_url
   depends_on         = [module.eks]
   providers          = {
     helm       = helm
@@ -68,17 +68,16 @@ module "jenkins" {
 }
 
 module "argo_cd" {
-  source            = "./modules/argo_cd"
-  namespace         = "argocd"
-  chart_version     = "5.46.4"
-  github_repo_url   = var.github_repo_url
-  github_user       = var.github_user
-  github_pat        = var.github_pat
+  source              = "./modules/argo_cd"
+  namespace           = "argocd"
+  chart_version       = "5.46.4"
+  github_repo_url     = var.github_repo_url
+  github_user         = var.github_user
+  github_pat          = var.github_pat
   app_target_revision = "lesson-8-9"
-  depends_on        = [module.eks]
-  providers         = {
+  depends_on = [module.eks]
+  providers = {
     helm       = helm
     kubernetes = kubernetes
   }
-
-
+}
