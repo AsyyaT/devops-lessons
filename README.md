@@ -85,3 +85,68 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
    * Можна перевірити всі ресурси (Deployment, Service, ConfigMap, HPA) у UI.
 
 ---
+
+### 1️⃣ Назва модуля та короткий опис
+
+```markdown
+# Terraform RDS Module
+
+Універсальний модуль для створення бази даних AWS:
+- Підтримка Aurora та звичайної RDS (`use_aurora`).
+- Створює DB Subnet Group, Security Group, Parameter Group.
+- Підтримує налаштування engine, версії, класу інстансу, multi-AZ.
+```
+
+---
+
+### 2️⃣ Приклад використання
+
+```hcl
+module "rds" {
+  source      = "./modules/rds"
+  
+  use_aurora       = false       # true для Aurora, false для RDS
+  engine           = "postgres"
+  engine_version   = "17.2"
+  instance_class   = "db.t3.medium"
+  multi_az         = true
+  db_name          = "myapp"
+  password         = "secure_password"
+  subnet_ids       = ["subnet-aaa", "subnet-bbb", "subnet-ccc"]
+  vpc_id           = "vpc-xxxx"
+  tags             = {
+    Environment = "dev"
+    Project     = "myapp"
+  }
+}
+```
+
+---
+
+### 3️⃣ Опис змінних
+
+| Змінна           | Тип    | Значення за замовчуванням | Опис                                    |
+| ---------------- | ------ | ------------------------- | --------------------------------------- |
+| `use_aurora`     | bool   | false                     | Використовувати Aurora або звичайну RDS |
+| `engine`         | string | "postgres"                | Тип БД (postgres, mysql тощо)           |
+| `engine_version` | string | "17.2"                    | Версія БД                               |
+| `instance_class` | string | "db.t3.medium"            | Клас інстансу (для RDS)                 |
+| `multi_az`       | bool   | true                      | Multi-AZ розгортання                    |
+| `db_name`        | string | "myapp"                   | Ім'я бази даних                         |
+| `password`       | string | -                         | Пароль користувача postgres             |
+| `subnet_ids`     | list   | []                        | Список підмереж для DB Subnet Group     |
+| `vpc_id`         | string | -                         | ID VPC                                  |
+| `tags`           | map    | {}                        | Теги для ресурсів                       |
+
+---
+
+### 4️⃣ Як змінити конфігурацію
+
+* **Тип БД та engine:** змінюємо `use_aurora` і `engine`.
+* **Версія engine:** `engine_version`.
+* **Клас інстансу:** `instance_class`.
+* **Multi-AZ:** `multi_az = true/false`.
+* **Subnet group та VPC:** передаємо `subnet_ids` і `vpc_id`.
+
+---
+

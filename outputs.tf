@@ -64,3 +64,23 @@ output "argocd_admin_password" {
   description = "Initial admin password"
   value       = module.argo_cd.admin_password
 }
+
+output "aurora_cluster_endpoint" {
+  value = module.rds.cluster_endpoint
+}
+
+output "aurora_reader_endpoint" {
+  value = module.rds.reader_endpoint
+}
+
+output "aurora_writer_endpoint" {
+  value = module.rds.writer_endpoint
+}
+
+output "aurora_readers" {
+  value = module.rds.reader_instances
+}
+
+output "aurora_cluster_arn" {
+  value = module.rds.cluster_arn
+}
